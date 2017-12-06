@@ -1,6 +1,6 @@
 #include <jni.h>
 #include <stdio.h>
-#include "Server.h"
+#include "ServerImplements.h"
 
 /**
  * Universidade Federal de Goiás(UFG)
@@ -20,11 +20,11 @@
 #include <time.h>
 
 #define TAMANHO        20   /**< Quantidade de movimentos pre processados.    */
-#define POPULACAOsize 500   /**< Quantidade de cromossomas de uma populacao.  */
+#define POPULACAOsize 400   /**< Quantidade de cromossomas de uma populacao.  */
 #define GERACOES      200   /**< Quantidade de vezes que a reproducao ocorre. */
-#define THRESHOLDcross 10  /**< Ponto de corte para selecao de individuos.   */
-#define SHIFTcross    250   /**< Escolhe os casais. Metade de POPULACAOsize.  */
-#define TXMutacao      50   /**< Taxa de mutacao ao gerar filhos.             */
+	#define THRESHOLDcross 10  /**< Ponto de corte para selecao de individuos.   */
+#define SHIFTcross    200   /**< Escolhe os casais. Metade de POPULACAOsize.  */
+#define TXMutacao      40   /**< Taxa de mutacao ao gerar filhos.             */
 
 #define X 21    /**< Tamanho do mapa em relacao ao eixo X.                    */
 #define Y 11    /**< Tamanho do mapa em relacao ao eixo Y.                    */
@@ -429,7 +429,7 @@ void melhorIndividuo(Jogador *minotauro, Posicao posicao)
     free(aptidao);
 }
 
-JNIEXPORT jstring JNICALL Java_Server_sayHello(JNIEnv *env, jobject thisObj, jstring inJNIStr) {
+JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject thisObj, jstring inJNIStr) {
    // Step 1: Convert the JNI String (jstring) into C-String (char*)
    const char *inCStr = (*env)->GetStringUTFChars(env, inJNIStr, NULL);
  

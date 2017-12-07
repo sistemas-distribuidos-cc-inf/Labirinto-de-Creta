@@ -1,7 +1,3 @@
-#include <jni.h>
-#include <stdio.h>
-#include "ServerImplements.h"
-
 /**
  * Universidade Federal de Goiás(UFG)
  * Instituto de Informática(INF)
@@ -14,16 +10,19 @@
  * 201300779    Warley Gonçalves dos Santos
  */
 
+#include <jni.h>
+#include "ServerImplements.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
-#define TAMANHO        20   /**< Quantidade de movimentos pre processados.    */
-#define POPULACAOsize 400   /**< Quantidade de cromossomas de uma populacao.  */
-#define GERACOES      200   /**< Quantidade de vezes que a reproducao ocorre. */
-	#define THRESHOLDcross 10  /**< Ponto de corte para selecao de individuos.   */
-#define SHIFTcross    200   /**< Escolhe os casais. Metade de POPULACAOsize.  */
+#define TAMANHO        15   /**< Quantidade de movimentos pre processados.    */
+#define POPULACAOsize 100   /**< Quantidade de cromossomas de uma populacao.  */
+#define GERACOES      50   /**< Quantidade de vezes que a reproducao ocorre. */
+#define THRESHOLDcross 2  /**< Ponto de corte para selecao de individuos.   */
+#define SHIFTcross    50   /**< Escolhe os casais. Metade de POPULACAOsize.  */
 #define TXMutacao      40   /**< Taxa de mutacao ao gerar filhos.             */
 
 #define X 21    /**< Tamanho do mapa em relacao ao eixo X.                    */
@@ -90,8 +89,8 @@ typedef struct Jogador
 int distanceManhattan(Posicao, Posicao);
 int simulaDesloca(Jogador, Posicao);
 void desloca(Jogador *, int);
-void geraIndividuo(Cromossoma *);
-Cromossoma *geraPopulacao(int );
+void geraIndividuo(Cromossoma *, Posicao);
+Cromossoma *geraPopulacao(int, Posicao);
 void melhorIndividuo(Jogador *, Posicao);
 void swap(int *, int *);
 Cromossoma *crossover(Cromossoma *);
@@ -138,6 +137,25 @@ int simulaDesloca(Jogador minotauro, Posicao posicao)
     }
     return distanceManhattan(copia.posicao, posicao);
 }
+
+
+int contaPassos(Labirinto mapa, Jogador fantasma, Posicao posicao)
+{
+    int i;
+
+    Labirinto copiaMapa;
+    Jogador copia = fantasma;
+    memcpy(copiaMapa, mapa, sizeof(char) * (X * Y) );
+
+    for(i = 0; i < TAMANHO; ++i)
+    {
+        desloca(&copia, i);
+        if(copia.posicao.x == posicao.x && copia.posicao.y == posicao.y)
+            return i;
+    }
+    return i -1;
+}
+
 
 /**
  * Essa função reposiciona o jogador no mapa.
@@ -192,14 +210,90 @@ void desloca(Jogador *jogador, int indice)
  * Funcao que gera os valores para uma cromossoma de forma aleatoria.
  * @param cromossoma Proximos passos a ser executado por um jogador.
  */
-void geraIndividuo(Cromossoma *cromossoma)
+void geraIndividuo(Cromossoma *cromossoma, Posicao p)
 {
-    int i;
+    Posicao q = p;
+    static char temp[11][21] =
+    {
+        "####################",
+        "#    #        #    #",
+        "# ## # ###### # ## #",
+        "# #              # #",
+        "# # ## ##  ## ## # #",
+        "#      #    #      #",
+        "# # ## ###### ## # #",
+        "# #              # #",
+        "# ## # ###### # ## #",
+        "#    #        #    #",
+        "####################"
+    };
+
+    int i, newCroma, repet, lest = 0, evitaVoltar;
     char posibilidades[] = {BAIXO, CIMA, ESQUERDA, DIREITA};
 
     for(i = 0; i < TAMANHO; ++i)
     {
-        (*cromossoma)[i] = posibilidades[rand() % 4];
+        evitaVoltar = 0;
+        do
+        {
+            repet = 0;
+            newCroma = posibilidades[rand() % 4];
+            if(newCroma == BAIXO)
+            {
+                if (lest == CIMA)
+                {
+                    evitaVoltar = 1;
+                }
+                if(temp[p.y + 1][p.x] == '#')
+                    repet = 1;
+                else
+                    ++p.y;
+            }
+            else if(newCroma == CIMA)
+            {
+                if (lest == BAIXO)
+                {
+                    evitaVoltar = 1;
+                }
+                if(temp[p.y - 1][p.x] == '#')
+                    repet = 1;
+                else
+                    --p.y;
+            }
+            else if(newCroma == ESQUERDA)
+            {
+                if (lest == DIREITA)
+                {
+                    evitaVoltar = 1;
+                }
+                if(temp[p.y][p.x - 1] == '#')
+                    repet = 1;
+                else
+                    --p.x;
+            }
+            else if(newCroma == DIREITA)
+            {
+                if (lest == ESQUERDA)
+                {
+                    evitaVoltar = 1;
+                }
+                if(temp[p.y][p.x + 1] == '#')
+                    repet = 1;
+                else
+                    ++p.x;
+            }
+
+        }
+        while(repet);
+
+        if(evitaVoltar)
+        {
+            i = -1;
+            p = q;
+            continue;
+        }
+        lest = newCroma;
+        (*cromossoma)[i] = newCroma;
     }
 }
 
@@ -208,7 +302,7 @@ void geraIndividuo(Cromossoma *cromossoma)
  * @param size Tamanho da populacao.
  * @return Ponteiro para a populacao gerada.
  */
-Cromossoma *geraPopulacao(int size)
+Cromossoma *geraPopulacao(int size, Posicao p)
 {
     int i;
     Cromossoma *populacao = (Cromossoma *) malloc(sizeof(Cromossoma) * size);
@@ -220,7 +314,7 @@ Cromossoma *geraPopulacao(int size)
     }
     for(i = 0; i < size; ++i)
     {
-        geraIndividuo(&(populacao[i]));
+        geraIndividuo(&(populacao[i]), p);
     }
     return populacao;
 }
@@ -281,9 +375,9 @@ Cromossoma *crossover(Cromossoma *pais)
     int i,
         j;
     Cromossoma *filhos;
-    int THRESHOLDcrosds = (rand() % (TAMANHO /2)) + 1;
 
     filhos  = (Cromossoma *) malloc(sizeof(Cromossoma) * POPULACAOsize);
+
     for(i = 0; i < (SHIFTcross / 2) + 1; ++i)
     {
         for(j = 0; j < THRESHOLDcross; ++j)
@@ -297,6 +391,7 @@ Cromossoma *crossover(Cromossoma *pais)
             filhos[i + SHIFTcross][j] = pais[i][j];
         }
     }
+
     for( ; i < SHIFTcross; ++i)
     {
         for(j = 0; j < THRESHOLDcross; ++j)
@@ -345,6 +440,7 @@ void mutacao(Cromossoma *cromossoma)
  */
 void melhorIndividuo(Jogador *minotauro, Posicao posicao)
 {
+
     int i,
         j,
         *aptidao,
@@ -354,10 +450,12 @@ void melhorIndividuo(Jogador *minotauro, Posicao posicao)
                *populacao,
                melhorPai;
 
+    int passosMelhorPai;
+    int passosAtual;
     /**
      * Gera populacao inicial e cria uma copia do Fantasma.
      */
-    populacao = geraPopulacao(POPULACAOsize);
+    populacao = geraPopulacao(POPULACAOsize, minotauro->posicao);
     memcpy(&copiaFantasma, minotauro, sizeof(Jogador));
 
     /**
@@ -372,13 +470,32 @@ void melhorIndividuo(Jogador *minotauro, Posicao posicao)
     }
     selectionSort(&populacao, aptidao, POPULACAOsize);
 
+
     for(i = 0; i < GERACOES; ++i)
     {
         /**
          * Mantem o historico de melhor pai.
          */
+
+        memcpy(&(copiaFantasma.cromossoma), &(populacao[0]), sizeof(Cromossoma));
+        passosMelhorPai = contaPassos(mapa, copiaFantasma, posicao);
         aptidaoMelhorPai = aptidao[0];
         memcpy(&melhorPai, populacao[0], sizeof(Cromossoma));
+
+        for(j = 1; j < POPULACAOsize; ++j)
+        {
+            memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
+                   sizeof(Cromossoma));
+
+            passosAtual = contaPassos(mapa, copiaFantasma, posicao);
+            if( passosAtual < passosMelhorPai)
+            {
+                passosMelhorPai = passosAtual;
+                aptidaoMelhorPai = aptidao[j];
+                memcpy(&melhorPai, populacao[j], sizeof(Cromossoma));
+            }
+        }
+
 
         /**
          * Selecao e Reproducao.
@@ -416,11 +533,26 @@ void melhorIndividuo(Jogador *minotauro, Posicao posicao)
          * Ordena e registra log da nova populacao.
          */
         selectionSort(&populacao, aptidao, POPULACAOsize);
+
+
     }
     /**
      * Escolha do individuo.
      */
-    memcpy(minotauro->cromossoma, populacao[0], sizeof(Cromossoma));
+    for(j = 0; j < POPULACAOsize; ++j)
+    {
+        memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
+               sizeof(Cromossoma));
+
+        passosAtual = contaPassos(mapa, copiaFantasma, posicao);
+        if( passosAtual < passosMelhorPai)
+        {
+            passosMelhorPai = passosAtual;
+            aptidaoMelhorPai = aptidao[j];
+            memcpy(&melhorPai, populacao[j], sizeof(Cromossoma));
+        }
+    }
+    memcpy(minotauro->cromossoma, melhorPai, sizeof(Cromossoma));
 
     /**
      * Libera memoria.

@@ -1,21 +1,23 @@
 # Labirinto-de-Creta
 
-# Compile and run Server:
+## Compile and run Server:
 
-- javac *.java
+1. javac *.java
 
-- javah ServerImplements
+2. javah ServerImplements
 
-- gcc -I/usr/lib/jvm/java-8-openjdk-amd64/include -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux -shared -o libmyjni.so LabirintoDeCreta.c -fPIC
+3. gcc -I/usr/lib/jvm/java-8-openjdk-amd64/include -I/usr/lib/jvm/java-8-openjdk-amd64/include/linux -shared -o libmyjni.so LabirintoDeCreta.c -fPIC
 
-- rmiregistry
+4. rmic ServerImplements
 
-- java -Djava.library.path=. Server
+5. rmiregistry
 
-# Compile and run Client:
+6. java -Djava.library.path=. Server
 
-- Copy stub to client path
+## Compile and run Client:
 
-- javac *.java
+1. Copy stub from server to client path
 
-- java -Djava.library.path=. Client
+2. javac *.java
+
+3. java -Djava.library.path=. Client

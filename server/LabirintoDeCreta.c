@@ -451,7 +451,7 @@ JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject th
         "# #              # #\n"
         "# ## # ###### # ## #\n"
         "#    #        #    #\n"
-        "####################"
+        "####################+"
     };
     
     desloca(&jogador01, 0);
@@ -463,7 +463,7 @@ JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject th
     if(jogador01.posicao.x == minotauro.posicao.x &&
             jogador01.posicao.y == minotauro.posicao.y)
     {
-
+	outCStr[231] = '-';
     }
     melhorIndividuo(&minotauro, jogador01.posicao);
     desloca(&minotauro, 0);
@@ -473,7 +473,7 @@ JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject th
     if(jogador01.posicao.x == minotauro.posicao.x &&
             jogador01.posicao.y == minotauro.posicao.y)
     {
-
+	outCStr[231] = '-';
     }
     outCStr[(jogador01.posicao.y * 21) + jogador01.posicao.x] = jogador01.id;
     outCStr[(minotauro.posicao.y * 21) + minotauro.posicao.x] = minotauro.id;

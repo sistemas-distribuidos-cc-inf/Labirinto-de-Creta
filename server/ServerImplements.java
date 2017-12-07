@@ -7,26 +7,29 @@ public class ServerImplements extends UnicastRemoteObject implements Interface{
 	super();
    }
 
-   public String move(String name) throws RemoteException
+   public String moveUp() throws RemoteException
    {
-        String result = new ServerImplements().sayHello(name);
+        String result = new ServerImplements().sayHello("w");
 	return result;
     }
-
+   public String moveDown() throws RemoteException
+   {
+        String result = new ServerImplements().sayHello("s");
+	return result;
+    }
+   public String moveLeft() throws RemoteException
+   {
+        String result = new ServerImplements().sayHello("a");
+	return result;
+    }
+   public String moveRight() throws RemoteException
+   {
+        String result = new ServerImplements().sayHello("d");
+	return result;
+    }
    static {
       System.loadLibrary("myjni"); // myjni.dll (Windows) or libmyjni.so (Unixes)
    }
    // Native method that receives a Java String and return a Java String
    private native String sayHello(String msg);
- 
-  // public static void main(String args[]) {
-       // String result = new ServerImplements().sayHello("0");
-       // System.out.println(result);
-   //	Scanner scan = new Scanner(System.in);
- //	while(true){
-  //       String s = scan.next();
-    //    result = new ServerImplements().sayHello(s);
-    //    System.out.println(result);
-     // } 
- //   }
 }

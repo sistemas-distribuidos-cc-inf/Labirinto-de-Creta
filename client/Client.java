@@ -12,12 +12,14 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 
 public class Client
 {
-	static private void processa(JFrame frame, int evt)throws MalformedURLException,
+	static private boolean processa(JFrame frame, int evt)throws MalformedURLException,
 	RemoteException, NotBoundException
 	{
+		boolean kill = false;
 		Interface game = (Interface) Naming.lookup("rmi://localhost/labirinto");	
 		frame.setSize(1000,550);
 		frame.setLocationRelativeTo(null);
@@ -42,7 +44,7 @@ public class Client
 			result = game.moveDown();
 		}else
 		{
-			return;
+			return kill;
 		}
 		JPanel panel1 = new JPanel();
 		panel1.setLayout(new GridLayout(11,20));
@@ -57,17 +59,21 @@ public class Client
 			else if (c == '0')
 				panel1.add(new JLabel(player));
 			else if (c == '-')
-				System.out.println("Fim de jogo!");
+			{
+				kill = true;
+			}
+				
 		}
 		panel1.setBackground(Color.WHITE);
 		frame.setContentPane(panel1);
 		SwingUtilities.updateComponentTreeUI(frame);
 		frame.setVisible(true);
+		return kill;
 	}
 
 	public static void main(String[] args)
 	{		
-		JFrame frame = new JFrame();
+		JFrame frame = new JFrame("Labirinto de Creta");
 		try{
 			processa(frame, KeyEvent.VK_W);
 		}catch(MalformedURLException e){}
@@ -79,7 +85,14 @@ public class Client
 			public void keyPressed(java.awt.event.KeyEvent evt)
 			{	
 				try{
-					processa(frame, evt.getKeyCode());
+					if(processa(frame, evt.getKeyCode())){
+		int result = JOptionPane.showConfirmDialog(frame,
+        "Fim de Jogo!",
+        "Confirm Quit", JOptionPane.DEFAULT_OPTION);
+if (result == JOptionPane.YES_OPTION) System.exit(0);
+
+					//	System.exit(0);
+						}
 				}catch(MalformedURLException e){}
 				catch(RemoteException e){}
 				catch(NotBoundException e){}		

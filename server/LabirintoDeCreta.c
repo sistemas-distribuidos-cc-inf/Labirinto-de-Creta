@@ -6,7 +6,7 @@
  * Atividade da disciplina de IA
  * Prof.
  *
- * Matricula    Nome
+ * Matricula    Nome Celso
  * 201300779    Warley Gonçalves dos Santos
  */
 
@@ -44,20 +44,20 @@
  */
 typedef char Labirinto[Y][X];
 
-    static Labirinto mapa =
-    {
-        "####################",
-        "#    #        #    #",
-        "# ## # ###### # ## #",
-        "# #              # #",
-        "# # ## ##  ## ## # #",
-        "#      #    #      #",
-        "# # ## ###### ## # #",
-        "# #              # #",
-        "# ## # ###### # ## #",
-        "#    #        #    #",
-        "####################"
-    };
+static Labirinto mapa =
+{
+    "####################",
+    "#    #        #    #",
+    "# ## # ###### # ## #",
+    "# #              # #",
+    "# # ## ##  ## ## # #",
+    "#      #    #      #",
+    "# # ## ###### ## # #",
+    "# #              # #",
+    "# ## # ###### # ## #",
+    "#    #        #    #",
+    "####################"
+};
 
 /**
  * Abstração de uma cromossoma, que simboliza a sequencias de jogadas
@@ -169,7 +169,7 @@ void desloca(Jogador *jogador, int indice)
 {
     switch (jogador->cromossoma[indice])
     {
-    case CIMA:
+        case CIMA:
         if(mapa[(jogador->posicao.y) - 1][jogador->posicao.x] != PAREDE)
         {
             mapa[jogador->posicao.y][jogador->posicao.x] = VAZIO;
@@ -177,7 +177,7 @@ void desloca(Jogador *jogador, int indice)
             --jogador->posicao.y;
         }
         break;
-    case BAIXO:
+        case BAIXO:
         if(mapa[jogador->posicao.y + 1][jogador->posicao.x] != PAREDE)
         {
             mapa[jogador->posicao.y][jogador->posicao.x] = VAZIO;
@@ -185,7 +185,7 @@ void desloca(Jogador *jogador, int indice)
             ++jogador->posicao.y;
         }
         break;
-    case ESQUERDA:
+        case ESQUERDA:
         if(mapa[jogador->posicao.y][jogador->posicao.x - 1] != PAREDE)
         {
             mapa[jogador->posicao.y][jogador->posicao.x] = VAZIO;
@@ -193,7 +193,7 @@ void desloca(Jogador *jogador, int indice)
             --jogador->posicao.x;
         }
         break;
-    case DIREITA:
+        case DIREITA:
         if(mapa[jogador->posicao.y][jogador->posicao.x + 1] != PAREDE)
         {
             mapa[jogador->posicao.y][jogador->posicao.x] = VAZIO;
@@ -201,7 +201,7 @@ void desloca(Jogador *jogador, int indice)
             ++jogador->posicao.x;
         }
         break;
-    default:
+        default:
         mapa[jogador->posicao.y][jogador->posicao.x] = jogador->id;
     }
 }
@@ -282,7 +282,6 @@ void geraIndividuo(Cromossoma *cromossoma, Posicao p)
                 else
                     ++p.x;
             }
-
         }
         while(repet);
 
@@ -343,8 +342,8 @@ void swap(int *a, int *b)
 void selectionSort(Cromossoma **populacao, int aptidao[], int size)
 {
     int i,
-        j,
-        least;
+    j,
+    least;
     Cromossoma tmp;
 
     for (i = 0; i < size - 1; ++i)
@@ -352,15 +351,15 @@ void selectionSort(Cromossoma **populacao, int aptidao[], int size)
         for (j = i + 1, least = i; j < size; ++j)
             if (aptidao[j] < aptidao[least])
                 least = j;
-        if (i != least)
-        {
-            swap(&aptidao[least], &aptidao[i]);
-            memcpy(&tmp,(*populacao)[least], sizeof(Cromossoma));
-            memcpy((*populacao)[least], (*populacao)[i], sizeof(Cromossoma));
-            memcpy((*populacao)[i], &tmp, sizeof(Cromossoma));
+            if (i != least)
+            {
+                swap(&aptidao[least], &aptidao[i]);
+                memcpy(&tmp,(*populacao)[least], sizeof(Cromossoma));
+                memcpy((*populacao)[least], (*populacao)[i], sizeof(Cromossoma));
+                memcpy((*populacao)[i], &tmp, sizeof(Cromossoma));
+            }
         }
     }
-}
 
 /**
  * Funcao que realiza a selecao e reproducao de individuos, ordenado do mais
@@ -370,67 +369,67 @@ void selectionSort(Cromossoma **populacao, int aptidao[], int size)
  * @see THRESHOLDcross Ponto de corte para a quantidade de pais aptos.
  * @see SHIFTcross Deslocamento entre os vetores de pais e maes.
  */
-Cromossoma *crossover(Cromossoma *pais)
-{
-    int i,
+    Cromossoma *crossover(Cromossoma *pais)
+    {
+        int i,
         j;
-    Cromossoma *filhos;
+        Cromossoma *filhos;
 
-    filhos  = (Cromossoma *) malloc(sizeof(Cromossoma) * POPULACAOsize);
+        filhos  = (Cromossoma *) malloc(sizeof(Cromossoma) * POPULACAOsize);
 
-    for(i = 0; i < (SHIFTcross / 2) + 1; ++i)
-    {
-        for(j = 0; j < THRESHOLDcross; ++j)
+        for(i = 0; i < (SHIFTcross / 2) + 1; ++i)
         {
-            filhos[i][j] = pais[i][j];
-            filhos[i + SHIFTcross][j] = pais[i + (SHIFTcross / 2) ][j];
+            for(j = 0; j < THRESHOLDcross; ++j)
+            {
+                filhos[i][j] = pais[i][j];
+                filhos[i + SHIFTcross][j] = pais[i + (SHIFTcross / 2) ][j];
+            }
+            for(j = THRESHOLDcross; j < TAMANHO; ++j)
+            {
+                filhos[i][j] = pais[(SHIFTcross / 2) + i][j];
+                filhos[i + SHIFTcross][j] = pais[i][j];
+            }
         }
-        for(j = THRESHOLDcross; j < TAMANHO; ++j)
+
+        for( ; i < SHIFTcross; ++i)
         {
-            filhos[i][j] = pais[(SHIFTcross / 2) + i][j];
-            filhos[i + SHIFTcross][j] = pais[i][j];
+            for(j = 0; j < THRESHOLDcross; ++j)
+            {
+                filhos[i][j] = pais[i][j];
+                filhos[i + SHIFTcross][j] = pais[i - (SHIFTcross / 2) - 1][j];
+            }
+            for(j = THRESHOLDcross; j < TAMANHO; ++j)
+            {
+                filhos[i][j] = pais[i - (SHIFTcross / 2) - 1][j];
+                filhos[i + SHIFTcross][j] = pais[i][j];
+            }
         }
+        return filhos;
     }
-
-    for( ; i < SHIFTcross; ++i)
-    {
-        for(j = 0; j < THRESHOLDcross; ++j)
-        {
-            filhos[i][j] = pais[i][j];
-            filhos[i + SHIFTcross][j] = pais[i - (SHIFTcross / 2) - 1][j];
-        }
-        for(j = THRESHOLDcross; j < TAMANHO; ++j)
-        {
-            filhos[i][j] = pais[i - (SHIFTcross / 2) - 1][j];
-            filhos[i + SHIFTcross][j] = pais[i][j];
-        }
-    }
-    return filhos;
-}
 /**
  * Funcao que realiza a mutacao de um gene de forma aleatoria.
  * A mutacao pode ocorrer ou nao de acordo com a taxa de mutação.
  * @param cromossoma Cromossoma que pode sofre a mutação.
  * @see TXMutacao Taxa de Mutacao
  */
-void mutacao(Cromossoma *cromossoma)
-{
-    char possibilidades[] = {BAIXO, CIMA, ESQUERDA, DIREITA};
-    char tmp;
-    int gene;
-
-    if((rand() % 100) < TXMutacao)
+    void mutacao(Cromossoma *cromossoma)
     {
-        do
-        {
-            tmp = possibilidades[rand() % 4];
-            gene = rand() % TAMANHO;
+        char possibilidades[] = {BAIXO, CIMA, ESQUERDA, DIREITA};
+        char tmp;
+        int gene;
 
+        if((rand() % 100) < TXMutacao)
+        {
+            do
+            {
+                tmp = possibilidades[rand() % 4];
+                gene = rand() % TAMANHO;
+
+            }
+            while(tmp == *(cromossoma)[gene]);
+            (*cromossoma)[gene] = tmp;
         }
-        while(tmp == *(cromossoma)[gene]);
-        (*cromossoma)[gene] = tmp;
     }
-}
 
 /**
  * Funcao responsavel pela IA.
@@ -438,54 +437,106 @@ void mutacao(Cromossoma *cromossoma)
  * @param posicao Posicao de destino.
  * @param mapa Labirinto do jogo.
  */
-void melhorIndividuo(Jogador *minotauro, Posicao posicao)
-{
-
-    int i,
+    void melhorIndividuo(Jogador *minotauro, Posicao posicao)
+    {
+        int i,
         j,
         *aptidao,
         aptidaoMelhorPai;
-    Jogador copiaFantasma;
-    Cromossoma *tmpPopulacao,
-               *populacao,
-               melhorPai;
+        Jogador copiaFantasma;
+        Cromossoma *tmpPopulacao,
+        *populacao,
+        melhorPai;
 
-    int passosMelhorPai;
-    int passosAtual;
+        int passosMelhorPai;
+        int passosAtual;
+
     /**
      * Gera populacao inicial e cria uma copia do Fantasma.
      */
-    populacao = geraPopulacao(POPULACAOsize, minotauro->posicao);
-    memcpy(&copiaFantasma, minotauro, sizeof(Jogador));
+        populacao = geraPopulacao(POPULACAOsize, minotauro->posicao);
+        memcpy(&copiaFantasma, minotauro, sizeof(Jogador));
 
     /**
      * Calcula a aptidao da populacao inicial, e ordena.
      */
-    aptidao = (int*) malloc(sizeof(int) * POPULACAOsize);
-    for(i = 0; i < POPULACAOsize; ++i)
-    {
-        memcpy(&(copiaFantasma.cromossoma), &(populacao[i]),
-               sizeof(Cromossoma));
-        aptidao[i] = simulaDesloca(copiaFantasma, posicao);
-    }
-    selectionSort(&populacao, aptidao, POPULACAOsize);
+        aptidao = (int*) malloc(sizeof(int) * POPULACAOsize);
+        for(i = 0; i < POPULACAOsize; ++i)
+        {
+            memcpy(&(copiaFantasma.cromossoma), &(populacao[i]),
+             sizeof(Cromossoma));
+            aptidao[i] = simulaDesloca(copiaFantasma, posicao);
+        }
+        selectionSort(&populacao, aptidao, POPULACAOsize);
 
-
-    for(i = 0; i < GERACOES; ++i)
-    {
+        for(i = 0; i < GERACOES; ++i)
+        {
         /**
          * Mantem o historico de melhor pai.
          */
+            memcpy(&(copiaFantasma.cromossoma), &(populacao[0]), sizeof(Cromossoma));
+            passosMelhorPai = contaPassos(mapa, copiaFantasma, posicao);
+            aptidaoMelhorPai = aptidao[0];
+            memcpy(&melhorPai, populacao[0], sizeof(Cromossoma));
 
-        memcpy(&(copiaFantasma.cromossoma), &(populacao[0]), sizeof(Cromossoma));
-        passosMelhorPai = contaPassos(mapa, copiaFantasma, posicao);
-        aptidaoMelhorPai = aptidao[0];
-        memcpy(&melhorPai, populacao[0], sizeof(Cromossoma));
+            for(j = 1; j < POPULACAOsize; ++j)
+            {
+                memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
+                 sizeof(Cromossoma));
 
-        for(j = 1; j < POPULACAOsize; ++j)
+                passosAtual = contaPassos(mapa, copiaFantasma, posicao);
+                if( passosAtual < passosMelhorPai)
+                {
+                    passosMelhorPai = passosAtual;
+                    aptidaoMelhorPai = aptidao[j];
+                    memcpy(&melhorPai, populacao[j], sizeof(Cromossoma));
+                }
+            }
+
+        /**
+         * Selecao e Reproducao.
+         */
+            tmpPopulacao = populacao;
+            populacao = crossover(populacao);
+            free(tmpPopulacao);
+
+        /**
+         * Mutacao.
+         */
+            for(j = 0; j < POPULACAOsize; ++j)
+            {
+                mutacao(&(populacao[j]));
+            }
+
+        /**
+         * Calculo de aptidao.
+         */
+            for(j = 0; j < POPULACAOsize; ++j)
+            {
+                memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
+                 sizeof(Cromossoma));
+                aptidao[j] = simulaDesloca(copiaFantasma, posicao);
+            }
+
+        /**
+         * Restaura o pai mais apto.
+         */
+            selectionSort(&populacao, aptidao, POPULACAOsize);
+            aptidao[POPULACAOsize - 1] = aptidaoMelhorPai;
+            memcpy(populacao[POPULACAOsize - 1], &melhorPai, sizeof(Cromossoma));
+
+        /**
+         * Ordena e registra log da nova populacao.
+         */
+            selectionSort(&populacao, aptidao, POPULACAOsize);
+        }
+    /**
+     * Escolha do individuo.
+     */
+        for(j = 0; j < POPULACAOsize; ++j)
         {
             memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
-                   sizeof(Cromossoma));
+             sizeof(Cromossoma));
 
             passosAtual = contaPassos(mapa, copiaFantasma, posicao);
             if( passosAtual < passosMelhorPai)
@@ -495,80 +546,23 @@ void melhorIndividuo(Jogador *minotauro, Posicao posicao)
                 memcpy(&melhorPai, populacao[j], sizeof(Cromossoma));
             }
         }
-
-
-        /**
-         * Selecao e Reproducao.
-         */
-        tmpPopulacao = populacao;
-        populacao = crossover(populacao);
-        free(tmpPopulacao);
-
-        /**
-         * Mutacao.
-         */
-        for(j = 0; j < POPULACAOsize; ++j)
-        {
-            mutacao(&(populacao[j]));
-        }
-
-        /**
-         * Calculo de aptidao.
-         */
-        for(j = 0; j < POPULACAOsize; ++j)
-        {
-            memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
-                   sizeof(Cromossoma));
-            aptidao[j] = simulaDesloca(copiaFantasma, posicao);
-        }
-
-        /**
-         * Restaura o pai mais apto.
-         */
-        selectionSort(&populacao, aptidao, POPULACAOsize);
-        aptidao[POPULACAOsize - 1] = aptidaoMelhorPai;
-        memcpy(populacao[POPULACAOsize - 1], &melhorPai, sizeof(Cromossoma));
-
-        /**
-         * Ordena e registra log da nova populacao.
-         */
-        selectionSort(&populacao, aptidao, POPULACAOsize);
-
-
-    }
-    /**
-     * Escolha do individuo.
-     */
-    for(j = 0; j < POPULACAOsize; ++j)
-    {
-        memcpy(&(copiaFantasma.cromossoma), &(populacao[j]),
-               sizeof(Cromossoma));
-
-        passosAtual = contaPassos(mapa, copiaFantasma, posicao);
-        if( passosAtual < passosMelhorPai)
-        {
-            passosMelhorPai = passosAtual;
-            aptidaoMelhorPai = aptidao[j];
-            memcpy(&melhorPai, populacao[j], sizeof(Cromossoma));
-        }
-    }
-    memcpy(minotauro->cromossoma, melhorPai, sizeof(Cromossoma));
+        memcpy(minotauro->cromossoma, melhorPai, sizeof(Cromossoma));
 
     /**
      * Libera memoria.
      */
-    free(populacao);
-    free(aptidao);
-}
+        free(populacao);
+        free(aptidao);
+    }
 
-JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject thisObj, jstring inJNIStr) {
-   // Step 1: Convert the JNI String (jstring) into C-String (char*)
-   const char *inCStr = (*env)->GetStringUTFChars(env, inJNIStr, NULL);
- 
-    static Jogador minotauro = {'U', 10, 5, PARADO}; /**< Jogador PC.     */
+    JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject thisObj, jstring inJNIStr)
+    {
+     const char *inCStr = (*env)->GetStringUTFChars(env, inJNIStr, NULL);
+     
+    static Jogador minotauro = {'U', 9, 5, DIREITA}; /**< Jogador PC.     */
     static Jogador jogador01 = {'0', 9, 9, PARADO};     /**< Jogador humano. */
-    if (NULL == inCStr) return NULL;
-        jogador01.cromossoma[0] = inCStr[0];
+     if (NULL == inCStr) return NULL;
+     jogador01.cromossoma[0] = inCStr[0];
     (*env)->ReleaseStringUTFChars(env, inJNIStr, inCStr);  // release resources
 
     char outCStr [] =
@@ -593,22 +587,23 @@ JNIEXPORT jstring JNICALL Java_ServerImplements_sayHello(JNIEnv *env, jobject th
      * jogo.
      */
     if(jogador01.posicao.x == minotauro.posicao.x &&
-            jogador01.posicao.y == minotauro.posicao.y)
+        jogador01.posicao.y == minotauro.posicao.y)
     {
-	outCStr[231] = '-';
+        outCStr[231] = '-';
     }
     melhorIndividuo(&minotauro, jogador01.posicao);
     desloca(&minotauro, 0);
+
     /**
      * Verifica se o deslocamento do jogador PC ocasionou o fim de jogo.
      */
     if(jogador01.posicao.x == minotauro.posicao.x &&
-            jogador01.posicao.y == minotauro.posicao.y)
+        jogador01.posicao.y == minotauro.posicao.y)
     {
-	outCStr[231] = '-';
+        outCStr[231] = '-';
     }
     outCStr[(jogador01.posicao.y * 21) + jogador01.posicao.x] = jogador01.id;
     outCStr[(minotauro.posicao.y * 21) + minotauro.posicao.x] = minotauro.id;
-   // Step 3: Convert the C-string (char*) into JNI String (jstring) and return
-   return (*env)->NewStringUTF(env, outCStr);
+
+    return (*env)->NewStringUTF(env, outCStr);
 }
